@@ -8,9 +8,12 @@
 </head>
 <body>
     <h1>All Restaurants</h1>
+    <div>
+        <a href="/restaurants/new">Add Restaurant </a>
+    </div>
     <ul>
         <% for (let r of restaurants) {%>
-            <li> <%= r.title %> </li>
+            <li> <a href="/restaurants/<%= r._id %>"><%= r.title %></a></li>
         <% }%>
     </ul>
 </body>
