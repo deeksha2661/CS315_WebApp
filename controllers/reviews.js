@@ -6,6 +6,9 @@ module.exports.createReview = async (req, res) => {
     const review = new Review(req.body.review);
     review.author = req.user._id;
     restaurant.reviews.push(review);
+    restaurant.ratingSum += parseInt(req.body.review.rating);
+    restaurant.totalReviews += 1;
+    restaurant.avgRating = Math.round((restaurant.ratingSum * 10)/restaurant.totalReviews)/10;
     await review.save();
     await restaurant.save();
     req.flash('success', 'Created new review!');

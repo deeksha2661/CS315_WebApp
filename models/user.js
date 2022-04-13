@@ -7,7 +7,15 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         unique: true
-    }
+    },
+    registeredOn: { 
+        type: Date,
+        default: Date.now 
+    },
+    restaurantOwned:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "restaurant"
+    }]
 });
 UserSchema.plugin(passportLocalMongoose);
 

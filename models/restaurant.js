@@ -11,7 +11,7 @@ ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 });
 
-const opts = { toJSON: { virtuals:true} };
+const opts = { toJSON: { virtuals:true } };
 
 const RestaurantSchema = new Schema({
     title: String,
@@ -27,12 +27,14 @@ const RestaurantSchema = new Schema({
           required: true
         }
     },
-    price: Number,
+    price: {
+        type: Number,
+        min:0
+    },
     description: String,
-    cuisines: String,
+    cuisine: String,
+    telephone: String,
     location: String,
-    startTime: Date,
-    endTime: Date,
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -42,7 +44,23 @@ const RestaurantSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Review'
         }
-    ]
+    ],
+    createdAt: { 
+        type: Date,
+        default: Date.now 
+    },
+    ratingSum:{
+        type: Number,
+        default: 0
+    },
+    totalReviews:{
+        type: Number,
+        default: 0
+    },
+    avgRating:{
+        type: Number,
+        default: 0
+    }
 }, opts);
 
 

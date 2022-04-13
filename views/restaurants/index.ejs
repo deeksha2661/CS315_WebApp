@@ -1,36 +1,212 @@
 <% layout('layouts/boilerplate')%>
-<div id="cluster-map" ></div>
+<link rel="stylesheet" href="/css/star-growRotate.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <h1>All Restaurants</h1>
-<div>
-    <a href="/restaurants/new">Add Restaurant </a>
-</div>
-    <% for (let r of restaurants) {%>
-        <div class="card mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <% if(r.images.length) { %>                         
-                    <img class="img-fluid" alt="" src="<%=r.images[0].url%>">
-                    <% } else { %>
-                    <img class="img-fluid" alt="" src="https://res.cloudinary.com/duw4qslmx/image/upload/v1649197832/cld-sample.jpg">
-                    <% } %>  
+
+<div id="cluster-map" ></div>
+
+<!-- <nav class="navbar navbar-expand-sm navbar-light bg-light py-3 py-md-2">
+    <div class="container">
+        <form action="/restaurants" method="GET" class="d-flex justify-content-between" style="width: 100%;"> -->
+        
+        <!-- </form>
+        
+        
+    </div>
+  </nav> -->
+  <!-- <div class="row" id="map-box">
+    <div class="col-md-3 col-lg-3">
+      <%// include ../partials/filter %>
+    </div>
+  </div> -->
+  <div class="container">
+      <div class="row my-3">
+      
+      <div class="col-3">
+        <form action="/restaurants" method="GET">
+            <legend>Search</legend>
+        <ul class="navbar-nav my-3">
+            
+            <div class="input-group">
+                <input class="form-control fst-italic" type="text" name="search" placeholder="Search.." autocomplete="off" value=<%= searchText %>>
+                <!-- <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button> -->
+            </div>            
+        </ul>
+    
+        <ul class="navbar-nav my-3">
+            <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle pb-0 text-muted" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                    <% if(sortingOption === "") { %> 
+                        Sort By                        
+                    <% } else if(sortingOption === "priceLow"){ %>
+                        Price: Low to High 
+                    <% } else if(sortingOption === "priceHigh"){ %>
+                        Price: High to Low
+                    <% } else if(sortingOption === "highRated"){ %>
+                        Highest Rated
+                    <% } else if(sortingOption === "mostRev"){ %>
+                        Most Reviewed
+                    <% } else if(sortingOption === "newAdded"){ %>
+                        Newly Added
+                    <% } %> 
+                    
+                </a>                
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    
+                        <button name="sortby" value="priceLow" >Price: Low to High</button>
+                    
+                        <button class="dropdown-item" name="sortby" value="priceHigh" >Price: High to Low</button>
+                   
+                        <button class="dropdown-item" name="sortby" value="highRated">Highest Rated</button>
+                    
+                        <button class="dropdown-item" name="sortby" value="mostRev">Most Reviewed</button>
+                    
+                        <button class="dropdown-item" name="sortby" value="newAdded">Newly Added</button>
+                    
                 </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <%=r.title%>
-                        </h5>
-                        
-                        <p class="card-text"><%=r.description%></p>
-                        <p class="card-text">
-                            <small class="text-muted"><%=r.location%></small>
-                        </p>
-                        <a class="btn btn-primary" href="/restaurants/<%=r._id%>">View <%=r.title%></a>
+            </li> -->
+            <legend>Sort By</legend>
+            <select name="sortby" class="border border-muted text-muted p-2 rounded ml-0 bg-white">
+                <option value="none" selected disabled hidden>
+                    <% if(sortingOption === "") { %> 
+                        Select an option                      
+                    <% } else if(sortingOption === "priceLow"){ %>
+                        Price: Low to High 
+                    <% } else if(sortingOption === "priceHigh"){ %>
+                        Price: High to Low
+                    <% } else if(sortingOption === "highRated"){ %>
+                        Highest Rated
+                    <% } else if(sortingOption === "mostRev"){ %>
+                        Most Reviewed
+                    <% } else if(sortingOption === "newAdded"){ %>
+                        Newly Added
+                    <% } %>
+                </option>
+                <option value="priceLow">Price: Low to High</option>
+                <option value="priceHigh">Price: High to Low</option>
+                <option value="highRated">Highest Rated</option>
+                <option value="mostRev">Most Reviewed</option>
+                <option value="newAdded">Newly Added</option>
+            </select>
+        </ul>
+        
+        <legend>Price</legend>
+            <div class="d-flex flex-row justify-content-left">
+                <div class="my-2 mr-2">
+                    <input
+                    type="number"
+                    class="form-control Min"
+                    name="minprice"
+                    id="min"
+                    step="1"
+                    min="0"
+                    placeholder="Min"
+                    value=<%= minPrice %>                     
+                    />
+                </div>
+                <div class="m-2">
+                    <input
+                    type="number"
+                    class="form-control Max"
+                    name="maxprice"
+                    id="max"
+                    step="1"
+                    min="0"
+                    placeholder="Max"
+                    value=<%= maxPrice %> 
+                    />
+                </div>  
+            
+            </div>
+            
+        <legend>Location</legend>
+        <ul class="navbar-nav my-3">            
+            <div class="input-group">
+                <input class="form-control fst-italic" type="text" name="place" placeholder="Location.." autocomplete="off" value=<%= place %>>
+                <!-- <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button> -->
+            </div>            
+        </ul>
+
+        <legend>Cuisine</legend>
+        <div class="vh-100">
+        <ul class="pl-0" style="list-style-type:none; height:40%; overflow:auto">
+            <% for (let c of cuisines) {%>
+                <li class="">        
+                <input class="m-1" type="checkbox" id=<%= c %>  name="cuisine" value=<%= c %> />
+                <label for=<%= c %>><%= c %></label>
+                </li>                
+            <% } %> 
+            </ul>
+            <div class="d-flex justify-content-around mt-5">
+                <a href="/restaurants" class="btn btn-danger">Reset</a>
+            <input class="btn btn-primary" type="submit" value="Search" />
+            </div>
+            </div>
+
+        </form>
+      </div>
+
+      <div class="col-9 mb-3">
+        <% for (let r of restaurants) {%>
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <% if(r.images.length) { %>                         
+                        <img class="img-fluid" alt="" src="<%=r.images[0].url%>">
+                        <% } else { %>
+                        <img class="img-fluid" alt="" src="https://res.cloudinary.com/duw4qslmx/image/upload/v1649197832/cld-sample.jpg">
+                        <% } %>  
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%=r.title%>
+                            </h5>
+                            
+                            <p class="card-text"><%=r.location%></p>
+                            <p class="card-text">
+                                <small> ₹ <%=r.price%> for 2</small>
+                                <br>
+                                <small class="text-muted"> <%=r.cuisine%></small>
+                            </p>
+                            <div class="card-text mb-3">
+                                <div class="text-muted">
+                                    <% if(r.reviews.length>0){ %> 
+                                        <% const stars= Math.round(r.avgRating) %> 
+                                        <% for(let i=1;i<=5;i++){ %>
+                                                <% if(i>stars){ %>
+                                                    <span class="fa fa-star"></span> 
+                                                <% }else{ %>    
+                                                    <span class="fa fa-star text-warning"></span> %> 
+                                                <% } %>
+                                        <% } %> 
+                                    <% } %> 
+                                    <span class="ms-2">
+                                        <% if(r.reviews.length==0){ %>
+                                            No reviews
+                                        <% }else if(r.reviews.length==1){ %>
+                                            1 review
+                                        <% }else{ %>
+                                            <%= r.reviews.length %> reviews  
+                                        <% } %>  
+                                    </span>
+                                </div>
+                            </div>
+                            <a class="btn btn-primary" href="/restaurants/<%=r._id%>">View <%=r.title%></a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    <% }%>
+        <% }%>
+    </div>
+      </div>
+
+
+      
+      
+  </div>
+   
 
 
     <script>

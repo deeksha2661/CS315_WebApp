@@ -4,7 +4,7 @@
     <div class="col-6 offset-3">
         <form action="/restaurants" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
             <div class="mb-3">
-                <label class="form-label" for="title">Title</label>
+                <label class="form-label" for="title">Name</label>
                 <input class="form-control" type="text" id="title" name="restaurant[title]" required>
                 <div class="valid-feedback">
                     Looks good!
@@ -17,13 +17,32 @@
                     Looks good!
                 </div>
             </div>
-            <!-- <div class="mb-3">
-                <label class="form-label" for="image">Image URL</label>
-                <input class="form-control" type="text" id="IMAGE" name="restaurant[IMAGE]" required>
+            
+            <div class="mb-3">
+                <label class="form-label" for="description">Address</label>
+                <textarea class="form-control" type="text" id="description" name="restaurant[description]" required></textarea>
                 <div class="valid-feedback">
                     Looks good!
                 </div>
-            </div> -->
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="description">Contact Number</label>
+                <textarea class="form-control" type="text" id="description" name="restaurant[telephone]" required></textarea>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="description">Cuisine</label>
+                <textarea class="form-control" type="text" id="description" name="restaurant[cuisine]" required></textarea>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+
+
             <div class="mb-3">
                 <label class="form-label" for="price">Restaurant Price for 2</label>
                 <div class="input-group">
@@ -34,13 +53,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="description">Description</label>
-                <textarea class="form-control" type="text" id="description" name="restaurant[description]" required></textarea>
-                <div class="valid-feedback">
-                    Looks good!
-                </div>
-            </div>
+
             <div class="mb-3">
                 <div class="form-file custom-file">
                     <input type="file" class="form-file-input" id="image" name="image" multiple>
@@ -54,6 +67,6 @@
                 <button class="btn btn-success">Add Restaurant</button>
             </div>
         </form>
-        <a href="/restaurants">All Restaurants</a>    
+        
     </div>
 </div>

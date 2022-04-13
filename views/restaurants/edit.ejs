@@ -4,7 +4,7 @@
         <div class="col-6 offset-3">
             <form action="/restaurants/<%= restaurant._id%>?_method=PUT" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label class="form-label" for="title">Title</label>
+                    <label class="form-label" for="title">Name</label>
                     <input class="form-control" type="text" id="title" name="restaurant[title]" value="<%=restaurant.title %>" required>
                     <div class="valid-feedback">
                         Looks good!
@@ -13,6 +13,30 @@
                 <div class="mb-3">
                     <label class="form-label" for="location">Location</label>
                     <input class="form-control" type="text" id="location" name="restaurant[location]" value="<%=restaurant.location %>" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="description">Address</label>
+                    <input class="form-control" type="text" id="description" name="restaurant[description]" value="<%=restaurant.description %>" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="telephone">Contact Number</label>
+                    <input class="form-control" type="text" id="telephone" name="restaurant[telephone]" value="<%=restaurant.telephone %>" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="cuisine">Cuisine</label>
+                    <input class="form-control" type="text" id="cuisine" name="restaurant[cuisine]" value="<%=restaurant.cuisine %>" required>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
@@ -28,13 +52,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="description">Description</label>
-                    <textarea class="form-control" type="text" id="description" name="restaurant[description]" required><%=restaurant.description%></textarea>
-                    <div class="valid-feedback">
-                        Looks good!
-                    </div>
-                </div>
+            
                 <div class="mb-3">
                     <div class="form-file custom-file">
                         <input type="file" class="form-file-input" id="image" name="image" multiple>
