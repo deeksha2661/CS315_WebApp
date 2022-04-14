@@ -8,99 +8,65 @@ let cuisines = require("../seeds/cuisines");
 
 module.exports.index = async (req, res) => {
     let restaurants = [];
-    let sortingOption = "";
-    let searchText = "";
-    let minPrice = "";
-    let maxPrice = "";
-    let place = "";
-    //let cuisines = ['chinese', 'kerala', 'burger', 'pizza', 'fast food'];
-    //restaurants = await Restaurant.find({});
-    
-    if(req.query.sortby=="priceLow"){
-        restaurants=await Restaurant.find({})
-        .sort({price: 1, avgRating: -1, totalReviews: -1, createdAt: -1})
-        sortingOption = "priceLow";
-    }
-    else if(req.query.sortby=="priceHigh"){
-        restaurants=await Restaurant.find({})
-        .sort({price: -1, avgRating: -1, totalReviews: -1, createdAt: -1})
-        sortingOption = "priceHigh";
-    }
-    else if(req.query.sortby=="highRated"){
-        restaurants=await Restaurant.find({})
-        .sort({avgRating: -1, totalReviews: -1, price: 1, createdAt: -1})
-        sortingOption = "highRated";
-    }
-    else if(req.query.sortby=="mostRev"){
-        restaurants=await Restaurant.find({})
-        .sort({totalReviews: -1, avgRating: -1, price: 1, createdAt: -1})
-        sortingOption = "mostRev";
-    }
-    else if(req.query.sortby=="newAdded"){
-        restaurants=await Restaurant.find({})
-        .sort({createdAt: -1})
-        sortingOption = "newAdded";
-    }
-    else{
-        restaurants=await Restaurant.find({});
-    }
 
-    if(req.query.search){     
-        searchText = req.query.search;   
-        restaurants = restaurants.filter(restaurant => {
-            if(req.query.search === '') return 1;
-            return restaurant.title.toLowerCase().includes(req.query.search.toLowerCase());
-        })        
-    }
+    let sortingOption = req.query.sortby;
+    let searchText = req.query.search;
+    let place = req.query.place;
+    let minPrice = req.query.minprice;
+    let maxPrice = req.query.maxprice;
+    let selectedCuisines = [];
 
-    if(req.query.minprice){
-        restaurants = restaurants.filter(restaurant => {
-            if(req.query.minprice === '') return 1;
-            return restaurant.price >= req.query.minprice;
-        })
-        minPrice = req.query.minprice;
-
-    }
-    if(req.query.maxprice){
-        restaurants = restaurants.filter(restaurant => {
-            if(req.query.maxprice === '') return 1;
-            return restaurant.price <= req.query.maxprice;
-        })
-        maxPrice = req.query.maxprice;
-
-    }
-
-    if(req.query.place){
-        place = req.query.place;
-        restaurants = restaurants.filter(restaurant => {
-            if(req.query.place === '') return 1;
-            return restaurant.location.toLowerCase().includes(req.query.place.toLowerCase());
-        })
-        
-    }
-
+    let cuisineList = []
     if(req.query.cuisine){
         if(typeof(req.query.cuisine) === 'string'){
-            restaurants = restaurants.filter(restaurant => {
-                return restaurant.cuisine.toLowerCase().includes(req.query.cuisine.toLowerCase());
-            })
+            cuisineList.push(new RegExp(req.query.cuisine, 'i'));
+            selectedCuisines = [req.query.cuisine];
         }
         else{
-            restaurants = restaurants.filter(restaurant => {
-                let flag = 0;
-                for(let c of req.query.cuisine){
-                    if(restaurant.cuisine.toLowerCase().includes(c.toLowerCase())){
-                        flag = 1;
-                        break;
-                    }
-                }
-                return flag; 
-            })
+            for(let c of req.query.cuisine){
+                cuisineList.push(new RegExp(c, 'i'));
+            }
+            selectedCuisines = req.query.cuisine;
         }
     }
-    
-    //console.log(req.query.cuisine);
-    res.render('restaurants/index', { restaurants , cuisines, sortingOption, searchText, minPrice, maxPrice, place});
+    else{
+         cuisineList.push(new RegExp('', 'i'));
+    }
+
+    if(!req.query.minprice || req.query.minprice==''){
+        req.query.minprice = 0;
+    }
+    if(!req.query.maxprice || req.query.maxprice==''){
+        req.query.maxprice = Infinity;
+    }
+
+    let sortingParameters = {}
+    if(req.query.sortby=="priceLow"){
+        sortingParameters = {"price" : 1, "avgRating" : -1, "totalReviews" : -1, "createdAt" : -1};
+    }
+    else if(req.query.sortby=="priceHigh"){
+        sortingParameters = {"price" : -1, "avgRating" : -1, "totalReviews" : -1, "createdAt" : -1};
+    }
+    else if(req.query.sortby=="highRated"){
+        sortingParameters = {"avgRating" : -1, "totalReviews" : -1, "price" : 1, "createdAt" : -1};
+    }
+    else if(req.query.sortby=="mostRev"){
+        sortingParameters = {"totalReviews" : -1, "avgRating" : -1, "price" : 1, "createdAt" : -1};
+    }
+    else if(req.query.sortby=="newAdded"){
+        sortingParameters = {"createdAt" : -1};
+    }
+    else{
+        sortingOption = "";
+    }
+
+    restaurants=await Restaurant.find({"title" : new RegExp(req.query.search, 'i'), 
+                                       "location" : new RegExp(req.query.place, 'i'),
+                                       "price" : {$gte : req.query.minprice , $lte : req.query.maxprice },
+                                       "cuisine" : {$in : cuisineList}
+                                    }).sort(sortingParameters)
+
+    res.render('restaurants/index', { restaurants, cuisines, selectedCuisines, sortingOption, searchText, minPrice, maxPrice, place});
 }
 
 module.exports.renderNewForm = (req, res) => {
