@@ -33,54 +33,56 @@ db.once("open", () => {
 const seedDB = async () => {
     await Restaurant.deleteMany({});
     const cuisines = new Set();
-    for(let i = 0; i < 50; i++){
-        let cuisineList = places[i].cuisine.split(",").map(item => item.trim());
-        for(let c of cuisineList){
-            cuisines.add(c);
-        }
-        let geoData = await geocoder.reverseGeocode({
-            query: [places[i].longitude, places[i].latitude],
-            limit: 1,
-            types: ["place"]
-          }).send()
-        let loc = geoData.body.features[0].place_name.slice(0, -7);
-        const r = new Restaurant({
-            author: '624c9050ea7b70ce9cf1628b',
-            location: `${loc}`,
-            title: `${places[i].name}`,
-            description: `${places[i].address}`,
-            price: `${places[i].cost_for_two}`,
-            cuisine: `${places[i].cuisine}`,
-            telephone: `${places[i].telephone}`,
-            geometry: {
-                type: "Point",
-                coordinates: [places[i].longitude, places[i].latitude]
-            },
-            images: [
-                {
-                    url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/DineOut/DineoutImage${i}-1.jpg`,
-                },
-                {
-                    url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/DineOut/DineoutImage${i}-2.jpg`,
+    for(let i = 0; i < places.length; i++){
+        try{
+            if(places[i].cost_for_two){
+                let cuisineList = places[i].cuisine.split(",").map(item => item.trim());
+                for(let c of cuisineList){
+                    cuisines.add(c);
                 }
-            ]
-            // images: [
-            //     {
-            //         url: `https://source.unsplash.com/collection/69817121/1600x900?sig=${i}1`,
-            //     },
-            //     {
-            //         url: `https://source.unsplash.com/collection/69817121/1600x900?sig=${i}2`,
-            //     }
-            // ]
-        })
-        await r.save();
-        // cloudinary.uploader.upload("https://source.unsplash.com/collection/69817121/1600x900?sig=${i}1", {
-        //     resource_type: "image",
-        //     folder: "DineOut",
-        //     public_id: `DineOutImage${i}-1`,
-        //     use_filename: true,
-        //     unique_filename: false
-
+                let geoData = await geocoder.reverseGeocode({
+                    query: [places[i].longitude, places[i].latitude],
+                    limit: 1,
+                    types: ["place"]
+                  }).send()
+                let loc = geoData.body.features[0].place_name.slice(0, -7);
+                const r = new Restaurant({
+                    author: '624c9050ea7b70ce9cf1628b',
+                    location: `${loc}`,
+                    title: `${places[i].name}`,
+                    description: `${places[i].address}`,
+                    price: `${places[i].cost_for_two}`,
+                    cuisine: `${places[i].cuisine}`,
+                    telephone: `${places[i].telephone}`,
+                    geometry: {
+                        type: "Point",
+                        coordinates: [places[i].longitude, places[i].latitude]
+                    },
+                    images: [
+                        {
+                            url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/DineOut/DineoutImage${i%3830}-1.jpg`,
+                        },
+                        {
+                            url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/DineOut/DineoutImage${i%3830}-2.jpg`,
+                        }
+                    ]
+                    // images: [
+                    //     {
+                    //         url: `https://source.unsplash.com/collection/69817121/1600x900?sig=${i}1`,
+                    //     },
+                    //     {
+                    //         url: `https://source.unsplash.com/collection/69817121/1600x900?sig=${i}2`,
+                    //     }
+                    // ]
+                })
+                await r.save();
+                // cloudinary.uploader.upload("https://source.unsplash.com/collection/69817121/1600x900?sig=${i}1", {
+                //     resource_type: "image",
+                //     folder: "DineOut",
+                //     public_id: `DineOutImage${i}-1`,
+                //     use_filename: true,
+                //     unique_filename: false
+        
         // });
         // cloudinary.uploader.upload("https://source.unsplash.com/collection/69817121/1600x900?sig=${i}1", {
         //     resource_type: "image",
@@ -90,7 +92,13 @@ const seedDB = async () => {
         //     use_filename: true,
         //     unique_filename: false
         // });
+            }
+        }catch (err) {
+            console.log(i, err);
+        }
+
     }
+    console.log(Array.from(cuisines).sort());
 }
 
 seedDB().then(() => {
